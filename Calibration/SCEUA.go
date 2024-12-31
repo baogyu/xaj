@@ -162,13 +162,13 @@ func (s *SCEUA) scein() {
 		}
 	} else {
 		// 使用默认参数
-		s.ngs = 10
+		s.ngs = 26
 		s.npg = 2*s.nopt + 1
 		s.nps = s.nopt + 1
 		s.alpha = 1
 		s.beta = 2*s.nopt + 1
-		s.maxn = 10000
-		s.kstop = 15
+		s.maxn = 100000
+		s.kstop = 20
 		s.pcento = 0.05
 		s.peps = 0.0005
 		s.iniflg = true
@@ -384,7 +384,7 @@ func (s *SCEUA) getpntNormal(xi, std, snew []float64) {
 	}
 }
 
-// chkcst 检查点是否满足约束条件
+// chkcst 检查参数约束条件
 func (s *SCEUA) chkcst(xx []float64, ibound *bool) {
 	*ibound = false
 	for i := 0; i < s.nopt; i++ {
@@ -472,7 +472,7 @@ func (s *SCEUA) cce(cx [][]float64, cf []float64, xnstd []float64, icall *int) {
 
 		// 对单纯形进行alpha次演化
 		for ialpha := 0; ialpha < s.alpha; ialpha++ {
-			// 获取最佳点���最差点
+			// 获取最佳点最差点
 			copy(sb, ss[0])
 			copy(sw, ss[s.nps-1])
 			fw := sf[s.nps-1]
@@ -581,7 +581,7 @@ func (s *SCEUA) selectParents(npg, nps int) []int {
 	return lcs
 }
 
-// CheckConvergence 检查是否满足收敛条件
+// CheckConvergence 改进的收敛判断
 func (s *SCEUA) CheckConvergence(x [][]float64, xnstd []float64, bound []float64, nloop int, icall *int, timeou *float64, gnrng *float64) {
 	// 检查是否超过最大试验次数
 	if *icall >= s.maxn {
@@ -730,10 +730,10 @@ func (s *SCEUA) RunModel() {
 	states := make([]*Data.State, nw)
 	for i := 0; i < nw; i++ {
 		states[i] = &Data.State{
-			WU: 0.085292130191392,
-			WL: 25.3537665495867,
-			WD: 36.38818002,
-			W:  61.82723869977809,
+			WU: 5,
+			WL: 20,
+			WD: 30,
+			W:  55,
 			Dt: 24.0,
 		}
 		states[i].ReadFromFile(path)
@@ -741,15 +741,15 @@ func (s *SCEUA) RunModel() {
 
 	//流域蒸散发
 	var evapotranspiration Evapotranspiration.Evapotranspiration
-	evapotranspiration.WL = 25.3537665495867
-	evapotranspiration.WU = 0.085292130191392
+	evapotranspiration.WL = 20
+	evapotranspiration.WU = 5
 	evapotranspiration.SetParmameter(&parameter)
 
 	//流域产流
 	var runoff Runoff.Runoff
-	runoff.WU = 0.085292130191392
-	runoff.WL = 25.3537665495867
-	runoff.WD = 36.38818002
+	runoff.WU = 5
+	runoff.WL = 20
+	runoff.WD = 30
 	runoff.WDM = 20
 	runoff.SetParmameter(&parameter)
 
